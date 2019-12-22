@@ -1,0 +1,12 @@
+#pragma once
+#define PI 3.1415926
+struct Functions
+{
+    float3 Out(float t)
+    {
+        return abs(sin(4 * PI * t)) / (4 * PI *t);
+    }
+};
+
+Functions f;
+return f.Out(t);

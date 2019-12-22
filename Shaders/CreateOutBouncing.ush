@@ -1,0 +1,57 @@
+#pragma once
+struct Functions
+{
+    int BinarySearch(in float array[10], int N, float val)
+    {
+        float lo = 0;
+        float hi = N - 1;
+        while (lo < hi)
+        {
+            int mi = floor((hi + lo) * 0.5);
+            if (array[mi] > val)
+            {
+                hi = mi;
+            }
+            else
+            {
+                lo = mi + 1;        
+            }
+        }    
+        return lo - 1;
+    }
+    float3 Out(float t, int WaveCnts, float WidthRatio, float DepthRatio)
+    {
+        float elements[10];
+
+        float FirstHalfWaveRight = 100;
+        elements[0] = 0;
+        elements[1] = FirstHalfWaveRight;
+        int eleIdx = 2;
+        for (int i = 1; i <= WaveCnts; i++)
+        {
+            elements[eleIdx] = elements[eleIdx - 1] + (elements[eleIdx - 1] - elements[eleIdx - 2]) * WidthRatio;
+            eleIdx++;
+        }
+
+        float TotalLen = elements[WaveCnts + 1];
+
+        int WaveIdx = BinarySearch(elements, WaveCnts + 2, t * TotalLen);
+
+        float WaveHeight = pow(DepthRatio, WaveIdx);
+        float ShiftUp = 1.0 - WaveHeight;
+        float invTotalLen = 1.0 / TotalLen;
+
+        float FirstRightBound = 100 * invTotalLen;
+        float SquareCoefficent = 1.0 / (FirstRightBound * FirstRightBound);
+
+        float Mid = WaveIdx == 0 ? 0.0 : (elements[WaveIdx] + elements[WaveIdx + 1]) * 0.5 * invTotalLen;
+        if (WaveIdx != 0)
+        {
+            SquareCoefficent = (1.0 - ShiftUp) / ((elements[WaveIdx] * invTotalLen - Mid) * (elements[WaveIdx] * invTotalLen - Mid));
+        }
+        return SquareCoefficent * (t - Mid) * (t - Mid) + ShiftUp;
+    }
+};
+
+Functions f;
+return f.Out(t, WaveCnts, WidthRatio, DepthRatio);
